@@ -1,0 +1,5 @@
+pandas
+google-cloud-bigquery
+numpy
+requests
+beautifulsoup4

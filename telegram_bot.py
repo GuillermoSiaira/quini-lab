@@ -1,5 +1,7 @@
 import os
 import itertools
+import threading
+from flask import Flask
 from dotenv import load_dotenv
 from google.cloud import bigquery
 from google import genai
@@ -221,7 +223,18 @@ async def process_request(message, user_text, context) -> None:
     except Exception as e:
         await processing_msg.edit_text(f"Error interno: {str(e)}")
 
+app_flask = Flask(__name__)
+
+@app_flask.route('/')
+def health():
+    return "OK", 200
+
+def run_flask():
+    port = int(os.environ.get("PORT", 8080))
+    app_flask.run(host="0.0.0.0", port=port)
+
 def main():
+    threading.Thread(target=run_flask, daemon=True).start()
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))

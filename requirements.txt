@@ -1,5 +1,8 @@
+python-telegram-bot
+google-genai
 pandas
 google-cloud-bigquery
-numpy
-requests
+python-dotenv
 beautifulsoup4
+lxml
+flask

@@ -5,6 +5,5 @@ google-cloud-bigquery
 python-dotenv
 beautifulsoup4
 lxml
-flask
 db-dtypes
 pandas-gbq

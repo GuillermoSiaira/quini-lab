@@ -1,7 +1,5 @@
 import os
 import itertools
-import threading
-from flask import Flask
 from dotenv import load_dotenv
 from google.cloud import bigquery
 from google import genai
@@ -223,23 +221,21 @@ async def process_request(message, user_text, context) -> None:
     except Exception as e:
         await processing_msg.edit_text(f"Error interno: {str(e)}")
 
-app_flask = Flask(__name__)
-
-@app_flask.route('/')
-def health():
-    return "OK", 200
-
-def run_flask():
-    port = int(os.environ.get("PORT", 8080))
-    app_flask.run(host="0.0.0.0", port=port)
-
 def main():
-    threading.Thread(target=run_flask, daemon=True).start()
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    app.run_polling()
+    
+    port = int(os.environ.get("PORT", 8080))
+    webhook_url = "https://quini-bot-75302691732.us-central1.run.app"
+    
+    app.run_webhook(
+        listen="0.0.0.0",
+        port=port,
+        url_path=TELEGRAM_TOKEN,
+        webhook_url=f"{webhook_url}/{TELEGRAM_TOKEN}"
+    )
 
 if __name__ == '__main__':
     main()
